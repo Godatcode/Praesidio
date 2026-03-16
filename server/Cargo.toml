@@ -1,0 +1,22 @@
+[package]
+name = "mcpshield-server"
+description = "MCPShield dashboard API server"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+mcpshield-core = { workspace = true }
+mcpshield-llm = { workspace = true }
+mcpshield-behavior = { workspace = true }
+mcpshield-threat-feed = { workspace = true }
+mcpshield-honeypot = { workspace = true }
+tokio = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+chrono = { workspace = true }
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true }
+actix-web = "4"
+actix-ws = "0.3"
+actix-cors = "0.7"

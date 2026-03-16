@@ -1,0 +1,18 @@
+[package]
+name = "mcpshield-llm"
+description = "LLM-powered analysis for MCPShield"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+mcpshield-core = { workspace = true }
+tokio = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+chrono = { workspace = true }
+tracing = { workspace = true }
+sha2 = { workspace = true }
+reqwest = { workspace = true }
+thiserror = { workspace = true }
+async-trait = "0.1"

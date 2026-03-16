@@ -1,0 +1,71 @@
+# OWASP MCP Top 10 Detection Rules
+
+[[rules]]
+id = "MCP01"
+name = "Token Mismanagement"
+description = "Detect leaked API tokens, keys, and credentials in tool outputs"
+severity = "critical"
+module = "filter.credential_leak"
+
+[[rules]]
+id = "MCP02"
+name = "Tool Poisoning"
+description = "Detect hidden instructions in tool descriptions"
+severity = "critical"
+module = "scanner.tool_poisoning"
+
+[[rules]]
+id = "MCP03"
+name = "Privilege Escalation"
+description = "Enforce least-privilege access per server/tool"
+severity = "high"
+module = "permissions.enforcer"
+
+[[rules]]
+id = "MCP04"
+name = "Supply Chain Attacks"
+description = "Detect rug-pull attacks and compromised packages"
+severity = "critical"
+module = "pinner.store"
+
+[[rules]]
+id = "MCP05"
+name = "Command Injection"
+description = "Detect injection patterns in tool outputs"
+severity = "critical"
+module = "filter.injection_filter"
+
+[[rules]]
+id = "MCP06"
+name = "Context Over-sharing"
+description = "Detect unusually large or high-entropy outputs"
+severity = "high"
+module = "behavior.anomaly"
+
+[[rules]]
+id = "MCP07"
+name = "Insufficient Auth"
+description = "Require explicit tool allowlists and confirmation"
+severity = "high"
+module = "permissions.enforcer"
+
+[[rules]]
+id = "MCP08"
+name = "Insufficient Logging"
+description = "Full audit trail for all security events"
+severity = "medium"
+module = "audit"
+
+[[rules]]
+id = "MCP09"
+name = "Shadow MCP Servers"
+description = "Detect cross-server shadowing and unauthorized servers"
+severity = "critical"
+module = "scanner.cross_server"
+
+[[rules]]
+id = "MCP10"
+name = "Covert Channel Abuse"
+description = "Detect data exfiltration via encoding and DNS tunneling"
+severity = "critical"
+module = "filter.exfil_detector"
