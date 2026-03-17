@@ -14,50 +14,40 @@ export function ThreatCard({ threat }: ThreatCardProps) {
   const colors = severityColor(threat.severity)
 
   return (
-    <motion.div
-      layout
-      className={cn(
-        'glass-card rounded-xl overflow-hidden',
-        'severity-left-border',
-        `severity-left-border-${threat.severity}`,
-      )}
-    >
+    <div className="card" style={{ overflow: 'hidden' }}>
       <button
         onClick={() => setExpanded(!expanded)}
-        className="w-full text-left p-4"
+        style={{ width: '100%', textAlign: 'left', padding: 20, background: 'none', border: 'none', cursor: 'pointer', color: 'inherit' }}
       >
-        <div className="flex items-start justify-between gap-3">
-          <div className="min-w-0 flex-1">
-            <div className="flex items-center gap-2 mb-1.5">
-              <span className="font-mono text-xs text-[#3f3f46] tabular-nums">{threat.id}</span>
+        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12 }}>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'rgba(255,255,255,0.2)', fontVariantNumeric: 'tabular-nums' }}>{threat.id}</span>
               <SeverityBadge severity={threat.severity} />
-              <span className="text-xs text-[#3f3f46] px-2 py-0.5 bg-white/[0.04] rounded">
+              <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.3)', padding: '2px 8px', background: 'rgba(255,255,255,0.06)', borderRadius: 4 }}>
                 {threat.category}
               </span>
             </div>
-            <h3 className="text-sm font-medium text-[#f4f4f5]">{threat.title}</h3>
-            <p className="text-[13px] text-[#52525b] mt-1 line-clamp-2">{threat.description}</p>
+            <h3 style={{ fontSize: 13, fontWeight: 450, color: 'rgba(255,255,255,0.9)' }}>{threat.title}</h3>
+            <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.3)', marginTop: 4, overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' as const }}>{threat.description}</p>
           </div>
 
           <motion.div
             animate={{ rotate: expanded ? 180 : 0 }}
             transition={{ duration: 0.2 }}
-            className="shrink-0 mt-1"
+            style={{ flexShrink: 0, marginTop: 4 }}
           >
-            <ChevronDown className="w-4 h-4 text-[#3f3f46]" />
+            <ChevronDown size={14} style={{ color: 'rgba(255,255,255,0.2)' }} />
           </motion.div>
         </div>
 
         {threat.owasp_ids.length > 0 && (
-          <div className="flex items-center gap-1.5 mt-2">
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 8 }}>
             {threat.owasp_ids.map((id) => (
               <span
                 key={id}
-                className={cn(
-                  'font-mono text-[10px] px-1.5 py-0.5 rounded',
-                  colors.text,
-                  colors.bg,
-                )}
+                className={cn('font-mono', colors.text, colors.bg)}
+                style={{ fontSize: 10, padding: '2px 6px', borderRadius: 4 }}
               >
                 {id}
               </span>
@@ -73,15 +63,22 @@ export function ThreatCard({ threat }: ThreatCardProps) {
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
-            className="overflow-hidden"
+            style={{ overflow: 'hidden' }}
           >
-            <div className="px-4 pb-4 border-t border-white/[0.04] pt-3 space-y-3">
+            <div style={{ padding: '12px 20px 20px', borderTop: '1px solid rgba(255,255,255,0.08)', display: 'flex', flexDirection: 'column', gap: 16 }}>
               {threat.pattern && (
                 <div>
-                  <span className="text-[11px] font-medium text-[#3f3f46] uppercase tracking-wider">
-                    Detection Pattern
-                  </span>
-                  <code className="block mt-1 font-mono text-xs text-purple-400 bg-purple-400/10 px-2 py-1.5 rounded">
+                  <span className="section-label">Detection Pattern</span>
+                  <code style={{
+                    display: 'block',
+                    marginTop: 6,
+                    fontFamily: 'var(--font-mono)',
+                    fontSize: 11,
+                    color: 'var(--purple)',
+                    background: 'rgba(139,92,246,0.06)',
+                    padding: '8px 12px',
+                    borderRadius: 8,
+                  }}>
                     {threat.pattern}
                   </code>
                 </div>
@@ -89,13 +86,11 @@ export function ThreatCard({ threat }: ThreatCardProps) {
 
               {threat.mitigations.length > 0 && (
                 <div>
-                  <span className="text-[11px] font-medium text-[#3f3f46] uppercase tracking-wider">
-                    Mitigations
-                  </span>
-                  <ul className="mt-1 space-y-0.5">
+                  <span className="section-label">Mitigations</span>
+                  <ul style={{ marginTop: 6, display: 'flex', flexDirection: 'column', gap: 4 }}>
                     {threat.mitigations.map((m, i) => (
-                      <li key={i} className="text-xs text-[#a1a1aa] flex items-center gap-1.5">
-                        <span className="w-1 h-1 rounded-full bg-emerald-400 shrink-0" />
+                      <li key={i} style={{ fontSize: 12, color: 'rgba(255,255,255,0.5)', display: 'flex', alignItems: 'center', gap: 8 }}>
+                        <span style={{ width: 4, height: 4, borderRadius: '50%', background: '#22c55e', flexShrink: 0 }} />
                         {m}
                       </li>
                     ))}
@@ -105,12 +100,10 @@ export function ThreatCard({ threat }: ThreatCardProps) {
 
               {threat.references.length > 0 && (
                 <div>
-                  <span className="text-[11px] font-medium text-[#3f3f46] uppercase tracking-wider">
-                    References
-                  </span>
-                  <div className="mt-1 flex flex-wrap gap-1.5">
+                  <span className="section-label">References</span>
+                  <div style={{ marginTop: 6, display: 'flex', flexWrap: 'wrap', gap: 6 }}>
                     {threat.references.map((ref, i) => (
-                      <span key={i} className="font-mono text-[11px] text-[#52525b] bg-white/[0.04] px-2 py-0.5 rounded">
+                      <span key={i} style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'rgba(255,255,255,0.3)', background: 'rgba(255,255,255,0.06)', padding: '2px 8px', borderRadius: 4 }}>
                         {ref}
                       </span>
                     ))}
@@ -121,6 +114,6 @@ export function ThreatCard({ threat }: ThreatCardProps) {
           </motion.div>
         )}
       </AnimatePresence>
-    </motion.div>
+    </div>
   )
 }

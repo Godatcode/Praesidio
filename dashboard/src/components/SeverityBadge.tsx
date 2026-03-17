@@ -1,24 +1,24 @@
-import { cn, severityColor } from '../lib/utils'
-
 interface SeverityBadgeProps {
   severity: string
   className?: string
 }
 
-export function SeverityBadge({ severity, className }: SeverityBadgeProps) {
-  const colors = severityColor(severity)
+function badgeClass(severity: string): string {
+  switch (severity) {
+    case 'critical': return 'badge-critical'
+    case 'high': return 'badge-high'
+    case 'warning': return 'badge-warning'
+    case 'medium': return 'badge-medium'
+    case 'low': return 'badge-low'
+    case 'info': return 'badge-info'
+    case 'clean': return 'badge-clean'
+    default: return ''
+  }
+}
 
+export function SeverityBadge({ severity, className }: SeverityBadgeProps) {
   return (
-    <span
-      className={cn(
-        'inline-flex items-center gap-1.5 rounded-full px-2 py-0.5',
-        'font-mono text-[11px] uppercase tracking-wider',
-        colors.bg,
-        colors.text,
-        className
-      )}
-    >
-      <span className={cn('h-1.5 w-1.5 rounded-full', colors.dot)} />
+    <span className={`badge ${badgeClass(severity)} ${className ?? ''}`}>
       {severity}
     </span>
   )

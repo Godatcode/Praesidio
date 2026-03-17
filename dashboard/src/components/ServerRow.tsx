@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { cn, severityColor, trustScoreColor, trustScoreBarColor } from '../lib/utils'
+import { cn, severityColor, trustScoreColor } from '../lib/utils'
 import { useRelativeTime } from '../hooks/useRelativeTime'
 import { SeverityBadge } from './SeverityBadge'
 import { ChevronDown } from 'lucide-react'
@@ -15,67 +15,55 @@ export function ServerRow({ server, onScan }: ServerRowProps) {
   const [expanded, setExpanded] = useState(false)
   const lastScan = useRelativeTime(server.last_scan)
 
-  const statusColor = server.status === 'active'
-    ? 'bg-emerald-400'
-    : server.status === 'blocked'
-      ? 'bg-red-400'
-      : server.status === 'scanning'
-        ? 'bg-amber-400 animate-pulse'
-        : 'bg-zinc-600'
+  const statusColor =
+    server.status === 'active' ? '#22c55e' :
+    server.status === 'blocked' ? '#ef4444' :
+    server.status === 'scanning' ? '#f59e0b' :
+    'rgba(255,255,255,0.15)'
 
   return (
-    <motion.div
-      layout
-      className={cn(
-        'glass-card rounded-xl overflow-hidden',
-        server.status === 'blocked' && 'border-red-400/20',
-      )}
-    >
+    <div className="card" style={{ overflow: 'hidden' }}>
       <button
         onClick={() => setExpanded(!expanded)}
-        className="w-full text-left p-4"
+        style={{ width: '100%', textAlign: 'left', padding: 20, background: 'none', border: 'none', cursor: 'pointer', color: 'inherit' }}
       >
-        <div className="flex items-center gap-4">
-          <div className={cn('w-2 h-2 rounded-full shrink-0 status-pulse', statusColor)} />
+        <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+          <span style={{ width: 6, height: 6, borderRadius: '50%', background: statusColor, flexShrink: 0 }} />
 
-          <div className="min-w-0 flex-1">
-            <div className="flex items-center gap-2">
-              <span className="text-sm font-medium text-[#f4f4f5]">
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <span style={{ fontSize: 13, fontWeight: 450, color: 'rgba(255,255,255,0.9)' }}>
                 {server.display_name}
               </span>
-              {server.status === 'blocked' && (
-                <SeverityBadge severity="critical" />
-              )}
+              {server.status === 'blocked' && <SeverityBadge severity="critical" />}
             </div>
-            <span className="text-xs text-[#3f3f46] font-mono">{server.config_source}</span>
+            <span style={{ fontSize: 11, fontFamily: 'var(--font-mono)', color: 'rgba(255,255,255,0.2)' }}>{server.config_source}</span>
           </div>
 
-          <div className="hidden sm:flex items-center gap-6 shrink-0">
-            <div className="text-right">
-              <div className="font-mono text-sm tabular-nums text-[#f4f4f5]">
+          <div style={{ display: 'flex', alignItems: 'center', gap: 24, flexShrink: 0 }}>
+            <div style={{ textAlign: 'right' }}>
+              <div style={{ fontFamily: 'var(--font-mono)', fontSize: 13, fontVariantNumeric: 'tabular-nums', color: 'rgba(255,255,255,0.9)' }}>
                 {server.tools.length}
               </div>
-              <div className="text-[11px] text-[#3f3f46]">tools</div>
+              <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.2)' }}>tools</div>
             </div>
 
-            <div className="w-24">
-              <div className="flex items-center justify-between mb-1">
-                <span className="text-[11px] text-[#3f3f46]">Trust</span>
-                <span className={cn('font-mono text-xs tabular-nums', trustScoreColor(server.trust_score))}>
+            <div style={{ width: 96 }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
+                <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.2)' }}>Trust</span>
+                <span className={trustScoreColor(server.trust_score)} style={{ fontFamily: 'var(--font-mono)', fontSize: 11, fontVariantNumeric: 'tabular-nums' }}>
                   {server.trust_score}
                 </span>
               </div>
-              <div className="h-1 rounded-full overflow-hidden bg-white/[0.06]">
-                <motion.div
-                  className={cn('h-full rounded-full', trustScoreBarColor(server.trust_score))}
-                  initial={{ width: 0 }}
-                  animate={{ width: `${server.trust_score}%` }}
-                  transition={{ duration: 0.8, ease: 'easeOut', delay: 0.3 }}
+              <div className="trust-bar" style={{ width: '100%' }}>
+                <div
+                  className={`trust-bar-fill ${server.trust_score >= 80 ? 'high' : server.trust_score >= 50 ? 'medium' : 'low'}`}
+                  style={{ width: `${server.trust_score}%` }}
                 />
               </div>
             </div>
 
-            <span className="font-mono text-xs text-[#3f3f46] tabular-nums w-16 text-right">
+            <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'rgba(255,255,255,0.2)', fontVariantNumeric: 'tabular-nums', width: 64, textAlign: 'right' }}>
               {lastScan}
             </span>
           </div>
@@ -84,7 +72,7 @@ export function ServerRow({ server, onScan }: ServerRowProps) {
             animate={{ rotate: expanded ? 180 : 0 }}
             transition={{ duration: 0.2 }}
           >
-            <ChevronDown className="w-4 h-4 text-[#3f3f46]" />
+            <ChevronDown size={14} style={{ color: 'rgba(255,255,255,0.2)' }} />
           </motion.div>
         </div>
       </button>
@@ -96,25 +84,23 @@ export function ServerRow({ server, onScan }: ServerRowProps) {
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
-            className="overflow-hidden"
+            style={{ overflow: 'hidden' }}
           >
-            <div className="border-t border-white/[0.04] p-4">
-              <div className="flex items-center justify-between mb-3">
-                <span className="text-[11px] font-medium text-[#3f3f46] uppercase tracking-wider">
-                  Tools ({server.tools.length})
-                </span>
+            <div style={{ borderTop: '1px solid rgba(255,255,255,0.08)', padding: 20 }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+                <span className="section-label">Tools ({server.tools.length})</span>
                 {onScan && (
                   <button
                     onClick={(e) => { e.stopPropagation(); onScan(server.name) }}
-                    className="text-xs font-medium text-purple-400 hover:text-purple-300 transition-colors"
+                    style={{ fontSize: 12, fontWeight: 450, color: 'var(--purple)', background: 'none', border: 'none', cursor: 'pointer' }}
                   >
                     Scan Now
                   </button>
                 )}
               </div>
 
-              <div className="space-y-1">
-                {server.tools.map((tool, i) => {
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                {server.tools.map((tool) => {
                   const analysisColors = severityColor(
                     tool.llm_analysis === 'malicious' ? 'critical' :
                     tool.llm_analysis === 'suspicious' ? 'warning' :
@@ -122,14 +108,20 @@ export function ServerRow({ server, onScan }: ServerRowProps) {
                   )
 
                   return (
-                    <motion.div
+                    <div
                       key={tool.name}
-                      initial={{ opacity: 0, x: 12 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: i * 0.05, type: 'spring', stiffness: 300, damping: 25 }}
-                      className="flex items-center gap-3 px-3 py-2 rounded-lg bg-white/[0.02] hover:bg-white/[0.04] transition-colors"
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 12,
+                        padding: '8px 12px',
+                        borderRadius: 8,
+                        transition: 'background 0.1s ease',
+                      }}
+                      onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.02)'}
+                      onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
                     >
-                      <span className="font-mono text-[13px] text-[#f4f4f5] min-w-0 flex-1 truncate">
+                      <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'rgba(255,255,255,0.9)', flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                         {tool.name}
                       </span>
 
@@ -142,7 +134,7 @@ export function ServerRow({ server, onScan }: ServerRowProps) {
 
                       <span className={cn(
                         'text-[10px] font-mono px-1.5 py-0.5 rounded',
-                        tool.behavior_baseline ? 'text-blue-400 bg-blue-400/10' : 'text-zinc-500 bg-white/[0.04]',
+                        tool.behavior_baseline ? 'text-blue-400 bg-blue-400/10' : 'text-zinc-500 bg-white/[0.06]',
                       )}>
                         {tool.behavior_baseline ? 'BASELINED' : 'NO BASELINE'}
                       </span>
@@ -155,10 +147,10 @@ export function ServerRow({ server, onScan }: ServerRowProps) {
                         {tool.llm_analysis}
                       </span>
 
-                      <span className="font-mono text-xs text-[#3f3f46] tabular-nums w-8 text-right">
+                      <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'rgba(255,255,255,0.2)', fontVariantNumeric: 'tabular-nums', width: 32, textAlign: 'right' }}>
                         {tool.calls_last_24h}
                       </span>
-                    </motion.div>
+                    </div>
                   )
                 })}
               </div>
@@ -166,6 +158,6 @@ export function ServerRow({ server, onScan }: ServerRowProps) {
           </motion.div>
         )}
       </AnimatePresence>
-    </motion.div>
+    </div>
   )
 }

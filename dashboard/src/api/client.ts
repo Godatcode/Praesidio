@@ -27,51 +27,78 @@ async function fetchOrMock<T>(
   }
 }
 
-const isArray = (d: unknown) => Array.isArray(d)
-const isObject = (d: unknown) => d != null && typeof d === 'object' && !Array.isArray(d)
+// Shape validators — fall back to mock if the backend returns unexpected fields
+const hasKeys = (d: unknown, keys: string[]) =>
+  d != null && typeof d === 'object' && !Array.isArray(d) &&
+  keys.every((k) => k in (d as Record<string, unknown>))
+
+const isArrayWithShape = (d: unknown, key: string) =>
+  Array.isArray(d) && (d.length === 0 || key in (d[0] as Record<string, unknown>))
 
 export async function getOverview(): Promise<OverviewData> {
-  return fetchOrMock('/overview', () => mockData.overview, isObject)
+  return fetchOrMock('/overview', () => mockData.overview, (d) =>
+    hasKeys(d, ['servers', 'threats_blocked']),
+  )
 }
 
 export async function getEvents(): Promise<AuditEvent[]> {
-  return fetchOrMock('/events', () => mockData.events, isArray)
+  return fetchOrMock('/events', () => mockData.events, (d) =>
+    isArrayWithShape(d, 'severity'),
+  )
 }
 
 export async function getServers(): Promise<ServerInfo[]> {
-  return fetchOrMock('/servers', () => mockData.servers, isArray)
+  return fetchOrMock('/servers', () => mockData.servers, (d) =>
+    isArrayWithShape(d, 'trust_score'),
+  )
 }
 
 export async function getThreats(): Promise<ThreatSignature[]> {
-  return fetchOrMock('/threats', () => mockData.threats, isArray)
+  return fetchOrMock('/threats', () => mockData.threats, (d) =>
+    isArrayWithShape(d, 'severity'),
+  )
 }
 
 export async function getHoneypotAttacks(): Promise<HoneypotAttack[]> {
-  return fetchOrMock('/honeypot/attacks', () => mockData.honeypot_attacks, isArray)
+  return fetchOrMock('/honeypot/attacks', () => mockData.honeypot_attacks, (d) =>
+    isArrayWithShape(d, 'attack_type'),
+  )
 }
 
 export async function getHoneypotStatus(): Promise<{ running: boolean; uptime_hours: number; total_attacks: number }> {
-  return fetchOrMock('/honeypot/status', () => mockData.honeypot_status, isObject)
+  return fetchOrMock('/honeypot/status', () => mockData.honeypot_status, (d) =>
+    hasKeys(d, ['running']),
+  )
 }
 
 export async function getComplianceMCP(): Promise<ComplianceItem[]> {
-  return fetchOrMock('/compliance/mcp', () => mockData.owasp_mcp, isArray)
+  return fetchOrMock('/compliance/mcp', () => mockData.owasp_mcp, (d) =>
+    isArrayWithShape(d, 'status'),
+  )
 }
 
 export async function getComplianceAgentic(): Promise<ComplianceItem[]> {
-  return fetchOrMock('/compliance/agentic', () => mockData.owasp_agentic, isArray)
+  return fetchOrMock('/compliance/agentic', () => mockData.owasp_agentic, (d) =>
+    isArrayWithShape(d, 'status'),
+  )
 }
 
 export async function getTrend(): Promise<{ hour: string; clean: number; warning: number; critical: number }[]> {
-  return fetchOrMock('/trend', () => mockData.trend, isArray)
+  return fetchOrMock('/trend', () => mockData.trend, (d) =>
+    isArrayWithShape(d, 'clean'),
+  )
 }
 
 export async function getAuditLog(): Promise<(AuditEvent & { raw?: Record<string, unknown> })[]> {
-  return fetchOrMock('/audit', () => mockData.audit, isArray)
+  return fetchOrMock('/audit', () => mockData.audit, (d) =>
+    isArrayWithShape(d, 'severity'),
+  )
 }
 
 export async function getConfig(): Promise<ConfigData> {
-  return fetchOrMock('/config', () => mockData.config, isObject)
+  return fetchOrMock('/config', () => mockData.config, (d) =>
+    hasKeys(d, ['global']),
+  )
 }
 
 export async function triggerScan(): Promise<{ status: string; findings: number }> {

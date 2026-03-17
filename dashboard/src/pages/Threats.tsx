@@ -1,10 +1,8 @@
 import { useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
 import { useApi } from '../hooks/useApi'
 import { getThreats } from '../api/client'
 import { ThreatCard } from '../components/ThreatCard'
-import { cn } from '../lib/utils'
-import { stagger, fadeUp } from '../lib/animations'
+import { useReveal } from '../hooks/useReveal'
 import { Search } from 'lucide-react'
 import type { Severity } from '../api/mock'
 
@@ -21,6 +19,9 @@ export function Threats() {
   const { data: threats } = useApi(getThreats)
   const [search, setSearch] = useState('')
   const [severity, setSeverity] = useState<Severity | 'all'>('all')
+  const revealHeader = useReveal()
+  const revealFilters = useReveal()
+  const revealList = useReveal()
 
   const filtered = (threats ?? []).filter((t) => {
     if (severity !== 'all' && t.severity !== severity) return false
@@ -37,82 +38,62 @@ export function Threats() {
   })
 
   return (
-    <motion.div
-      className="space-y-6"
-      initial="hidden"
-      animate="visible"
-      variants={stagger}
-    >
-      <motion.div variants={fadeUp}>
-        <h1 className="text-2xl font-semibold text-[#f4f4f5]">Threat Signatures</h1>
-        <p className="text-sm text-[#3f3f46] mt-0.5">
-          {threats?.length ?? 0} detection rules active
-        </p>
-      </motion.div>
+    <div>
+      <div ref={revealHeader} className="reveal" style={{ marginBottom: 48 }}>
+        <h1 className="page-title">Threat Signatures</h1>
+        <p className="page-subtitle">{threats?.length ?? 0} detection rules active</p>
+      </div>
 
-      {/* Search + Filters */}
-      <motion.div variants={fadeUp} className="space-y-3">
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#3f3f46]" />
+      <div ref={revealFilters} className="reveal" style={{ marginBottom: 24, display: 'flex', flexDirection: 'column', gap: 12 }}>
+        <div style={{ position: 'relative' }}>
+          <Search size={14} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'rgba(255,255,255,0.2)' }} />
           <input
             type="text"
             placeholder="Search threats..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className={cn(
-              'w-full glass-card rounded-lg pl-10 pr-4 py-2.5',
-              'text-sm text-[#f4f4f5] placeholder:text-[#3f3f46]',
-              'focus:outline-none focus:border-white/[0.1] transition-colors',
-            )}
+            style={{ width: '100%', paddingLeft: 36, paddingRight: 16, paddingTop: 10, paddingBottom: 10 }}
           />
         </div>
 
-        <div className="flex items-center gap-2">
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           {filters.map((f) => (
-            <motion.button
+            <button
               key={f.value}
               onClick={() => setSeverity(f.value)}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className={cn(
-                'px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200',
-                severity === f.value
-                  ? 'bg-white/[0.06] text-[#f4f4f5] border border-white/[0.1]'
-                  : 'text-[#a1a1aa] hover:text-[#f4f4f5] hover:bg-white/[0.03] border border-transparent',
-              )}
+              style={{
+                padding: '6px 12px',
+                borderRadius: 8,
+                fontSize: 12,
+                fontWeight: 450,
+                border: severity === f.value ? '1px solid rgba(255,255,255,0.08)' : '1px solid transparent',
+                background: severity === f.value ? 'rgba(255,255,255,0.06)' : 'transparent',
+                color: severity === f.value ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.4)',
+                cursor: 'pointer',
+                transition: 'all 0.15s ease',
+              }}
             >
               {f.label}
-            </motion.button>
+            </button>
           ))}
           {filtered.length !== (threats?.length ?? 0) && (
-            <span className="text-xs text-[#3f3f46] ml-2 font-mono tabular-nums">
+            <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.2)', marginLeft: 8, fontFamily: 'var(--font-mono)', fontVariantNumeric: 'tabular-nums' }}>
               {filtered.length} results
             </span>
           )}
         </div>
-      </motion.div>
+      </div>
 
-      {/* Threat list */}
-      <motion.div variants={fadeUp} className="space-y-3">
-        <AnimatePresence mode="popLayout">
-          {filtered.map((threat, i) => (
-            <motion.div
-              key={threat.id}
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              transition={{ delay: i * 0.04, type: 'spring', stiffness: 200, damping: 20 }}
-            >
-              <ThreatCard threat={threat} />
-            </motion.div>
-          ))}
-        </AnimatePresence>
+      <div ref={revealList} className="reveal" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+        {filtered.map((threat) => (
+          <ThreatCard key={threat.id} threat={threat} />
+        ))}
         {filtered.length === 0 && threats && (
-          <div className="text-center py-12 text-[#3f3f46] text-sm">
+          <div style={{ textAlign: 'center', padding: '48px 0', color: 'rgba(255,255,255,0.2)', fontSize: 13 }}>
             No threats match your filters
           </div>
         )}
-      </motion.div>
-    </motion.div>
+      </div>
+    </div>
   )
 }

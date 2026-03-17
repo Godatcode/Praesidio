@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion'
+import { useEffect, useState } from 'react'
 
 interface ProgressRingProps {
   value: number
@@ -13,28 +13,34 @@ export function ProgressRing({
   value,
   max,
   size = 80,
-  strokeWidth = 6,
+  strokeWidth = 5,
   color = '#8b5cf6',
   label,
 }: ProgressRingProps) {
   const radius = (size - strokeWidth) / 2
   const circumference = 2 * Math.PI * radius
   const percentage = max > 0 ? value / max : 0
-  const strokeDashoffset = circumference * (1 - percentage)
+  const target = circumference * (1 - percentage)
+
+  const [offset, setOffset] = useState(circumference)
+  useEffect(() => {
+    const t = setTimeout(() => setOffset(target), 100)
+    return () => clearTimeout(t)
+  }, [target])
 
   return (
-    <div className="flex flex-col items-center gap-2">
-      <div className="relative" style={{ width: size, height: size }}>
-        <svg width={size} height={size} className="-rotate-90">
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
+      <div style={{ position: 'relative', width: size, height: size }}>
+        <svg width={size} height={size} style={{ transform: 'rotate(-90deg)' }}>
           <circle
             cx={size / 2}
             cy={size / 2}
             r={radius}
             fill="none"
-            stroke="rgba(255,255,255,0.06)"
+            stroke="rgba(255,255,255,0.08)"
             strokeWidth={strokeWidth}
           />
-          <motion.circle
+          <circle
             cx={size / 2}
             cy={size / 2}
             r={radius}
@@ -43,19 +49,35 @@ export function ProgressRing({
             strokeWidth={strokeWidth}
             strokeLinecap="round"
             strokeDasharray={circumference}
-            initial={{ strokeDashoffset: circumference }}
-            animate={{ strokeDashoffset }}
-            transition={{ duration: 1.2, ease: 'easeOut', delay: 0.3 }}
+            strokeDashoffset={offset}
+            style={{ transition: 'stroke-dashoffset 1.2s cubic-bezier(0.16, 1, 0.3, 1)' }}
           />
         </svg>
-        <div className="absolute inset-0 flex items-center justify-center">
-          <span className="font-mono text-sm font-semibold text-[#f4f4f5] tabular-nums">
+        <div style={{
+          position: 'absolute',
+          inset: 0,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}>
+          <span style={{
+            fontFamily: 'var(--font-mono)',
+            fontSize: 13,
+            fontWeight: 500,
+            color: 'rgba(255,255,255,0.9)',
+            fontVariantNumeric: 'tabular-nums',
+          }}>
             {value}/{max}
           </span>
         </div>
       </div>
       {label && (
-        <span className="text-[11px] uppercase tracking-widest text-[#52525b]">
+        <span style={{
+          fontSize: 10,
+          textTransform: 'uppercase' as const,
+          letterSpacing: '0.08em',
+          color: 'rgba(255,255,255,0.3)',
+        }}>
           {label}
         </span>
       )}

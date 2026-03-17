@@ -1,12 +1,13 @@
 import { useCallback } from 'react'
-import { motion } from 'framer-motion'
 import { useApi } from '../hooks/useApi'
 import { getServers, triggerScan } from '../api/client'
 import { ServerRow } from '../components/ServerRow'
-import { stagger, fadeUp } from '../lib/animations'
+import { useReveal } from '../hooks/useReveal'
 
 export function Servers() {
   const { data: servers, refetch } = useApi(getServers)
+  const revealHeader = useReveal()
+  const revealList = useReveal()
 
   const handleScan = useCallback(async (_name: string) => {
     await triggerScan()
@@ -14,37 +15,32 @@ export function Servers() {
   }, [refetch])
 
   return (
-    <motion.div
-      className="space-y-6"
-      initial="hidden"
-      animate="visible"
-      variants={stagger}
-    >
-      <motion.div variants={fadeUp}>
-        <h1 className="text-2xl font-semibold text-[#f4f4f5]">Servers</h1>
-        <p className="text-sm text-[#3f3f46] mt-0.5">
+    <div>
+      <div ref={revealHeader} className="reveal" style={{ marginBottom: 48 }}>
+        <h1 className="page-title">Servers</h1>
+        <p className="page-subtitle">
           {servers?.length ?? 0} MCP servers discovered across {new Set(servers?.map(s => s.config_source)).size} configurations
         </p>
-      </motion.div>
+      </div>
 
-      <motion.div variants={fadeUp} className="space-y-3">
-        {servers?.map((server, i) => (
-          <motion.div
-            key={server.name}
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.06, type: 'spring', stiffness: 200, damping: 20 }}
-          >
-            <ServerRow server={server} onScan={handleScan} />
-          </motion.div>
+      <div ref={revealList} className="reveal" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+        {servers?.map((server) => (
+          <ServerRow key={server.name} server={server} onScan={handleScan} />
         ))}
 
         {!servers && (
-          <div className="flex items-center justify-center h-32">
-            <div className="w-5 h-5 border-2 border-purple-400 border-t-transparent rounded-full animate-spin" />
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: 128 }}>
+            <div style={{
+              width: 20, height: 20,
+              border: '2px solid rgba(139,92,246,0.4)',
+              borderTopColor: 'transparent',
+              borderRadius: '50%',
+              animation: 'spin 1s linear infinite',
+            }} />
+            <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
           </div>
         )}
-      </motion.div>
-    </motion.div>
+      </div>
+    </div>
   )
 }

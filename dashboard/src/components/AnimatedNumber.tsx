@@ -7,13 +7,13 @@ interface AnimatedNumberProps {
   format?: (n: number) => string
 }
 
-export function AnimatedNumber({ value, className = '', format }: AnimatedNumberProps) {
+export function AnimatedNumber({ value, className = 'metric-value', format }: AnimatedNumberProps) {
   const [displayValue, setDisplayValue] = useState(0)
   const motionValue = useMotionValue(0)
   const spring = useSpring(motionValue, { duration: 1200, bounce: 0 })
 
   useEffect(() => {
-    motionValue.set(value)
+    motionValue.set(typeof value === 'number' && !isNaN(value) ? value : 0)
   }, [value, motionValue])
 
   useEffect(() => {
@@ -25,9 +25,5 @@ export function AnimatedNumber({ value, className = '', format }: AnimatedNumber
 
   const text = format ? format(displayValue) : displayValue.toString()
 
-  return (
-    <span className={`font-mono tabular-nums ${className}`}>
-      {text}
-    </span>
-  )
+  return <span className={className}>{text}</span>
 }
