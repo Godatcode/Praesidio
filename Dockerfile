@@ -1,5 +1,5 @@
 # Stage 1: Build
-FROM rust:1.82-slim AS builder
+FROM rust:1.85-slim AS builder
 
 WORKDIR /app
 
@@ -10,6 +10,11 @@ RUN apt-get update && apt-get install -y \
     libssl-dev \
     build-essential \
     && rm -rf /var/lib/apt/lists/*
+
+# Reduce memory usage during compilation
+ENV CARGO_BUILD_JOBS=2
+ENV CARGO_INCREMENTAL=0
+ENV RUST_BACKTRACE=1
 
 # Copy workspace manifest and lock first (Docker layer caching)
 COPY Cargo.toml Cargo.lock ./
