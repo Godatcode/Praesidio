@@ -5,7 +5,7 @@
   <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="MIT License"/>
 </p>
 
-<h1 align="center">🛡️ Praesidio</h1>
+<h1 align="center">Praesidio</h1>
 
 <p align="center">
   <strong>The open-source security platform for MCP servers and AI agents.</strong><br/>
