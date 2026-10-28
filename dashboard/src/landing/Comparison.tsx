@@ -2,6 +2,7 @@ import { useLandingReveal } from '../hooks/useLandingReveal'
 import { Check, X } from 'lucide-react'
 
 const products = ['Praesidio', 'mcp-scan', 'Onyx', 'Strata']
+const TABLE_MIN_WIDTH = 600
 const features = [
   { name: 'Runtime proxy / firewall', values: [true, false, false, true] },
   { name: 'Tool description scanning', values: [true, true, false, false] },
@@ -42,7 +43,9 @@ export function Comparison() {
           background: 'rgba(255,255,255,0.05)',
           border: '1px solid rgba(255,255,255,0.08)',
           borderRadius: 16,
-          overflow: 'hidden',
+          // Scroll the table inside its card on narrow screens instead of clipping the last columns
+          overflowX: 'auto',
+          overflowY: 'hidden',
         }}
       >
         {/* Header */}
@@ -50,6 +53,7 @@ export function Comparison() {
           style={{
             display: 'grid',
             gridTemplateColumns: '2fr repeat(4, 1fr)',
+            minWidth: TABLE_MIN_WIDTH,
             borderBottom: '1px solid rgba(255,255,255,0.06)',
           }}
         >
@@ -80,6 +84,7 @@ export function Comparison() {
             style={{
               display: 'grid',
               gridTemplateColumns: '2fr repeat(4, 1fr)',
+              minWidth: TABLE_MIN_WIDTH,
               borderBottom: rowIdx < features.length - 1 ? '1px solid rgba(255,255,255,0.04)' : 'none',
               transition: 'background 0.15s ease',
             }}
