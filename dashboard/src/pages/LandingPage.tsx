@@ -7,8 +7,11 @@ import { HowItWorks } from '../landing/HowItWorks'
 import { Comparison } from '../landing/Comparison'
 import { CTA } from '../landing/CTA'
 import { Footer } from '../landing/Footer'
+import { useAnchorScroll } from '../hooks/useAnchorScroll'
 
 export default function LandingPage() {
+  useAnchorScroll()
+
   return (
     <div className="landing-page" style={{ background: '#08080c', color: '#f0f0f2', minHeight: '100vh' }}>
       <Navbar />
