@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react'
+import { useMediaQuery, MOBILE_QUERY } from '../hooks/useMediaQuery'
 
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false)
+  const isMobile = useMediaQuery(MOBILE_QUERY)
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20)
@@ -17,7 +19,7 @@ export function Navbar() {
         left: 0,
         right: 0,
         zIndex: 100,
-        padding: '0 40px',
+        padding: isMobile ? '0 16px' : '0 40px',
         height: 64,
         display: 'flex',
         alignItems: 'center',
@@ -51,27 +53,32 @@ export function Navbar() {
       </div>
 
       <div style={{ display: 'flex', alignItems: 'center', gap: 32 }}>
-        <a
-          href="#features"
-          className="navbar-link"
-          style={{ fontSize: 13, color: '#8a8a9a', textDecoration: 'none', transition: 'color 0.2s' }}
-        >
-          Features
-        </a>
-        <a
-          href="#how-it-works"
-          className="navbar-link"
-          style={{ fontSize: 13, color: '#8a8a9a', textDecoration: 'none', transition: 'color 0.2s' }}
-        >
-          How It Works
-        </a>
-        <a
-          href="#comparison"
-          className="navbar-link"
-          style={{ fontSize: 13, color: '#8a8a9a', textDecoration: 'none', transition: 'color 0.2s' }}
-        >
-          Compare
-        </a>
+        {/* Section links don't fit beside the logo on phones; the CTA alone stays visible */}
+        {!isMobile && (
+          <>
+            <a
+              href="#features"
+              className="navbar-link"
+              style={{ fontSize: 13, color: '#8a8a9a', textDecoration: 'none', transition: 'color 0.2s' }}
+            >
+              Features
+            </a>
+            <a
+              href="#how-it-works"
+              className="navbar-link"
+              style={{ fontSize: 13, color: '#8a8a9a', textDecoration: 'none', transition: 'color 0.2s' }}
+            >
+              How It Works
+            </a>
+            <a
+              href="#comparison"
+              className="navbar-link"
+              style={{ fontSize: 13, color: '#8a8a9a', textDecoration: 'none', transition: 'color 0.2s' }}
+            >
+              Compare
+            </a>
+          </>
+        )}
         <a
           href="#cta"
           style={{
@@ -79,6 +86,7 @@ export function Navbar() {
             fontWeight: 500,
             color: '#f0f0f2',
             textDecoration: 'none',
+            whiteSpace: 'nowrap',
             padding: '7px 16px',
             borderRadius: 8,
             background: 'linear-gradient(135deg, #7c5bf0 0%, #4a8bf5 100%)',

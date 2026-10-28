@@ -1,5 +1,9 @@
 import { Link } from 'react-router-dom'
 
+const REPO_URL = 'https://github.com/Godatcode/Praesidio'
+
+const linkStyle = { fontSize: 13, color: '#8a8a9a', textDecoration: 'none' }
+
 export function Footer() {
   return (
     <footer
@@ -10,7 +14,7 @@ export function Footer() {
         margin: '0 auto',
       }}
     >
-      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 40 }}>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 40, alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 40 }}>
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
             <img
@@ -37,7 +41,7 @@ export function Footer() {
           </p>
         </div>
 
-        <div style={{ display: 'flex', gap: 48 }}>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 48 }}>
           <div>
             <div style={{ fontSize: 11, fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'rgba(255,255,255,0.3)', marginBottom: 16 }}>Product</div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
@@ -50,16 +54,15 @@ export function Footer() {
             <div style={{ fontSize: 11, fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'rgba(255,255,255,0.3)', marginBottom: 16 }}>Resources</div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
               <a href="#how-it-works" style={{ fontSize: 13, color: '#8a8a9a', textDecoration: 'none' }}>Documentation</a>
-              <span style={{ fontSize: 13, color: '#8a8a9a' }}>Threat Database</span>
-              <span style={{ fontSize: 13, color: '#8a8a9a' }}>OWASP Mapping</span>
+              <a href={`${REPO_URL}/tree/main/rules`} target="_blank" rel="noopener noreferrer" style={linkStyle}>Threat Database</a>
+              <a href={`${REPO_URL}#owasp-coverage`} target="_blank" rel="noopener noreferrer" style={linkStyle}>OWASP Mapping</a>
             </div>
           </div>
           <div>
             <div style={{ fontSize: 11, fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'rgba(255,255,255,0.3)', marginBottom: 16 }}>Company</div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-              <span style={{ fontSize: 13, color: '#8a8a9a' }}>Blog</span>
-              <span style={{ fontSize: 13, color: '#8a8a9a' }}>GitHub</span>
-              <span style={{ fontSize: 13, color: '#8a8a9a' }}>Contact</span>
+              <a href={REPO_URL} target="_blank" rel="noopener noreferrer" style={linkStyle}>GitHub</a>
+              <a href={`${REPO_URL}/issues`} target="_blank" rel="noopener noreferrer" style={linkStyle}>Contact</a>
             </div>
           </div>
         </div>

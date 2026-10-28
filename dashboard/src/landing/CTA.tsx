@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useLandingReveal } from '../hooks/useLandingReveal'
 import { ArrowRight, Loader2 } from 'lucide-react'
+import { useMediaQuery, MOBILE_QUERY } from '../hooks/useMediaQuery'
 
 const API_BASE = import.meta.env.VITE_API_URL || ''
 
@@ -9,10 +10,15 @@ export function CTA() {
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'already' | 'error'>('idle')
   const [errorMsg, setErrorMsg] = useState('')
   const sectionRef = useLandingReveal({ y: 30 })
+  const isMobile = useMediaQuery(MOBILE_QUERY)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!email.includes('@') || !email.includes('.')) return
+    if (!email.includes('@') || !email.includes('.')) {
+      setErrorMsg('Please enter a valid email address.')
+      setStatus('error')
+      return
+    }
 
     setStatus('loading')
     setErrorMsg('')
@@ -39,7 +45,7 @@ export function CTA() {
   }
 
   return (
-    <section id="cta" style={{ padding: '120px 40px 80px' }}>
+    <section id="cta" style={{ padding: isMobile ? '80px 16px 60px' : '120px 40px 80px' }}>
       <div
         ref={sectionRef}
         className="cta-glass"
@@ -47,7 +53,7 @@ export function CTA() {
           maxWidth: 700,
           margin: '0 auto',
           textAlign: 'center',
-          padding: '80px 48px',
+          padding: isMobile ? '48px 20px' : '80px 48px',
         }}
       >
         {/* Subtle orb */}
@@ -69,7 +75,7 @@ export function CTA() {
         <div style={{ position: 'relative', zIndex: 1 }}>
           <h2 style={{
             fontFamily: "'Clash Display', sans-serif",
-            fontSize: 36,
+            fontSize: isMobile ? 28 : 36,
             fontWeight: 500,
             letterSpacing: '-0.03em',
             color: '#f0f0f2',
@@ -98,15 +104,23 @@ export function CTA() {
             </div>
           ) : (
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
-              <div style={{ display: 'flex', gap: 12, justifyContent: 'center' }}>
+              <div style={{
+                display: 'flex',
+                flexDirection: isMobile ? 'column' : 'row',
+                gap: 12,
+                justifyContent: 'center',
+                width: isMobile ? '100%' : undefined,
+              }}>
                 <input
                   type="email"
+                  required
                   placeholder="you@company.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   disabled={status === 'loading'}
                   style={{
-                    width: 300,
+                    width: isMobile ? '100%' : 300,
+                    boxSizing: 'border-box',
                     padding: '12px 20px',
                     borderRadius: 10,
                     border: '1px solid rgba(255,255,255,0.1)',
@@ -128,6 +142,7 @@ export function CTA() {
                   style={{
                     display: 'inline-flex',
                     alignItems: 'center',
+                    justifyContent: 'center',
                     gap: 8,
                     padding: '12px 24px',
                     borderRadius: 10,
