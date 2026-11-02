@@ -1,5 +1,3 @@
-import { Link } from 'react-router-dom'
-
 const REPO_URL = 'https://github.com/Godatcode/Praesidio'
 
 const linkStyle = { fontSize: 13, color: '#8a8a9a', textDecoration: 'none' }
@@ -47,13 +45,14 @@ export function Footer() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
               <a href="#features" style={{ fontSize: 13, color: '#8a8a9a', textDecoration: 'none' }}>Features</a>
               <a href="#comparison" style={{ fontSize: 13, color: '#8a8a9a', textDecoration: 'none' }}>Compare</a>
-              <Link to="/app" style={{ fontSize: 13, color: '#8a8a9a', textDecoration: 'none' }}>Dashboard</Link>
+              {/* The dashboard runs locally (`praesidio dashboard`); point to the setup steps */}
+              <a href={`${REPO_URL}#quick-start`} target="_blank" rel="noopener noreferrer" style={linkStyle}>Dashboard</a>
             </div>
           </div>
           <div>
             <div style={{ fontSize: 11, fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'rgba(255,255,255,0.3)', marginBottom: 16 }}>Resources</div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-              <a href="#how-it-works" style={{ fontSize: 13, color: '#8a8a9a', textDecoration: 'none' }}>Documentation</a>
+              <a href={`${REPO_URL}#readme`} target="_blank" rel="noopener noreferrer" style={linkStyle}>Documentation</a>
               <a href={`${REPO_URL}/tree/main/rules`} target="_blank" rel="noopener noreferrer" style={linkStyle}>Threat Database</a>
               <a href={`${REPO_URL}#owasp-coverage`} target="_blank" rel="noopener noreferrer" style={linkStyle}>OWASP Mapping</a>
             </div>

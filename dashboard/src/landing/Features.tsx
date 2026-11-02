@@ -1,5 +1,6 @@
 import { useLandingReveal, useStaggerReveal } from '../hooks/useLandingReveal'
 import { Shield, Brain, Activity, Globe, Bug, CheckCircle } from 'lucide-react'
+import { useMediaQuery, MOBILE_QUERY } from '../hooks/useMediaQuery'
 
 const features = [
   {
@@ -43,9 +44,10 @@ const features = [
 export function Features() {
   const titleRef = useLandingReveal({ y: 20 })
   const gridRef = useStaggerReveal('.feature-card', 100)
+  const isMobile = useMediaQuery(MOBILE_QUERY)
 
   return (
-    <section id="features" style={{ padding: '120px 40px', maxWidth: 1100, margin: '0 auto' }}>
+    <section id="features" style={{ padding: isMobile ? '80px 16px' : '120px 40px', maxWidth: 1100, margin: '0 auto' }}>
       <div ref={titleRef} style={{ textAlign: 'center', marginBottom: 64 }}>
         <h2
           style={{
@@ -65,8 +67,8 @@ export function Features() {
         ref={gridRef}
         style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(3, 1fr)',
-          gap: 20,
+          gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)',
+          gap: isMobile ? 16 : 20,
         }}
       >
         {features.map((feature) => {
@@ -76,7 +78,7 @@ export function Features() {
               key={feature.title}
               className="feature-card"
               style={{
-                padding: 32,
+                padding: isMobile ? 24 : 32,
                 background: 'rgba(255,255,255,0.05)',
                 border: '1px solid rgba(255,255,255,0.08)',
                 borderRadius: 16,
