@@ -11,7 +11,7 @@ export function useAnchorScroll() {
   useEffect(() => {
     let cancel: (() => void) | null = null
 
-    const scrollToTarget = (target: HTMLElement) => {
+    const scrollToTarget = (target: HTMLElement, behavior: ScrollBehavior = 'smooth') => {
       cancel?.()
       let timer = 0
       let lastY = -1
@@ -28,7 +28,7 @@ export function useAnchorScroll() {
       window.addEventListener('touchstart', stop, { passive: true })
       window.addEventListener('wheel', stop, { passive: true })
 
-      const scroll = () => target.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      const scroll = () => target.scrollIntoView({ behavior, block: 'start' })
 
       const check = () => {
         const y = window.scrollY
@@ -64,8 +64,18 @@ export function useAnchorScroll() {
       scrollToTarget(target)
     }
 
+    // A shared link such as praesidio.live/#cta: the browser looks for the #hash target while
+    // parsing index.html, before React has rendered any section, so it never scrolls. Jump to it
+    // once the sections exist.
+    const frame = window.requestAnimationFrame(() => {
+      const id = decodeURIComponent(window.location.hash.slice(1))
+      const target = id ? document.getElementById(id) : null
+      if (target) scrollToTarget(target, 'instant')
+    })
+
     document.addEventListener('click', onClick)
     return () => {
+      window.cancelAnimationFrame(frame)
       document.removeEventListener('click', onClick)
       cancel?.()
     }
