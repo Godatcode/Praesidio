@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { useLandingReveal } from '../hooks/useLandingReveal'
+import { useMediaQuery, MOBILE_QUERY } from '../hooks/useMediaQuery'
 
 function CountUp({ target, suffix = '' }: { target: number; suffix?: string }) {
   const [count, setCount] = useState(0)
@@ -34,7 +35,7 @@ function CountUp({ target, suffix = '' }: { target: number; suffix?: string }) {
   return <span ref={ref}>{count.toLocaleString()}{suffix}</span>
 }
 
-function StatCard({ target, suffix, label, delay }: { target: number; suffix: string; label: string; delay: number }) {
+function StatCard({ target, suffix, label, delay, isMobile }: { target: number; suffix: string; label: string; delay: number; isMobile: boolean }) {
   const cardRef = useLandingReveal({ y: 30, delay })
 
   return (
@@ -42,9 +43,10 @@ function StatCard({ target, suffix, label, delay }: { target: number; suffix: st
       ref={cardRef}
       className="stat-card"
       style={{
-        flex: 1,
+        flex: isMobile ? undefined : 1,
+        minWidth: 0,
         textAlign: 'center',
-        padding: '48px 32px',
+        padding: isMobile ? '32px 24px' : '48px 20px',
         background: 'rgba(255,255,255,0.05)',
         border: '1px solid rgba(255,255,255,0.08)',
         borderRadius: 16,
@@ -54,7 +56,7 @@ function StatCard({ target, suffix, label, delay }: { target: number; suffix: st
       <span
         style={{
           fontFamily: "'Clash Display', sans-serif",
-          fontSize: 56,
+          fontSize: isMobile ? 48 : 'clamp(36px, 4.6vw, 56px)',
           fontWeight: 600,
           letterSpacing: '-0.03em',
           background: 'linear-gradient(180deg, #f0f0f2 0%, rgba(240,240,242,0.5) 100%)',
@@ -74,9 +76,10 @@ function StatCard({ target, suffix, label, delay }: { target: number; suffix: st
 
 export function Problem() {
   const titleRef = useLandingReveal({ y: 20 })
+  const isMobile = useMediaQuery(MOBILE_QUERY)
 
   return (
-    <section style={{ padding: '120px 40px', maxWidth: 1100, margin: '0 auto' }}>
+    <section style={{ padding: isMobile ? '80px 16px' : '120px 40px', maxWidth: 1100, margin: '0 auto' }}>
       <div ref={titleRef} style={{ textAlign: 'center', marginBottom: 64 }}>
         <h2
           style={{
@@ -92,10 +95,10 @@ export function Problem() {
         </h2>
       </div>
 
-      <div style={{ display: 'flex', gap: 20 }}>
-        <StatCard target={30} suffix="+" label="CVEs filed in 60 days" delay={0} />
-        <StatCard target={437} suffix="K" label="Compromised downloads" delay={0.1} />
-        <StatCard target={400} suffix="M+" label="Raised by competitors in 90 days" delay={0.2} />
+      <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: isMobile ? 16 : 20 }}>
+        <StatCard target={30} suffix="+" label="CVEs filed in 60 days" delay={0} isMobile={isMobile} />
+        <StatCard target={437} suffix="K" label="Compromised downloads" delay={0.1} isMobile={isMobile} />
+        <StatCard target={400} suffix="M+" label="Raised by competitors in 90 days" delay={0.2} isMobile={isMobile} />
       </div>
     </section>
   )

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useLandingReveal } from '../hooks/useLandingReveal'
+import { useMediaQuery, MOBILE_QUERY } from '../hooks/useMediaQuery'
 
 function TypewriterLine({ text, delay, color, prompt }: { text: string; delay: number; color?: string; prompt?: boolean }) {
   const [displayed, setDisplayed] = useState('')
@@ -86,11 +87,11 @@ const terminals = [
   },
 ]
 
-function Terminal({ terminal, index }: { terminal: typeof terminals[0]; index: number }) {
+function Terminal({ terminal, index, isMobile }: { terminal: typeof terminals[0]; index: number; isMobile: boolean }) {
   const ref = useLandingReveal({ y: 30, delay: index * 0.15 })
 
   return (
-    <div ref={ref} style={{ flex: 1 }}>
+    <div ref={ref} style={{ flex: isMobile ? undefined : 1, minWidth: 0 }}>
       <div
         style={{
           background: '#0e0e14',
@@ -115,7 +116,7 @@ function Terminal({ terminal, index }: { terminal: typeof terminals[0]; index: n
           </span>
         </div>
         {/* Terminal content with typing animation */}
-        <div style={{ padding: '16px 20px', fontFamily: "'JetBrains Mono', monospace", fontSize: 12, lineHeight: 1.7 }}>
+        <div style={{ padding: isMobile ? '14px 16px' : '16px 20px', fontFamily: "'JetBrains Mono', monospace", fontSize: isMobile ? 11 : 12, lineHeight: 1.7 }}>
           {terminal.lines.map((line, i) => (
             <TypewriterLine
               key={i}
@@ -176,9 +177,10 @@ function ConnectingPath() {
 
 export function HowItWorks() {
   const titleRef = useLandingReveal({ y: 20 })
+  const isMobile = useMediaQuery(MOBILE_QUERY)
 
   return (
-    <section id="how-it-works" style={{ padding: '120px 40px', maxWidth: 1100, margin: '0 auto' }}>
+    <section id="how-it-works" style={{ padding: isMobile ? '80px 16px' : '120px 40px', maxWidth: 1100, margin: '0 auto' }}>
       <div ref={titleRef} style={{ textAlign: 'center', marginBottom: 64 }}>
         <span style={{
           fontSize: 11,
@@ -205,7 +207,8 @@ export function HowItWorks() {
         </h2>
       </div>
 
-      {/* Step numbers with connecting path */}
+      {/* Step numbers with connecting path; dropped on phones, where the terminals stack and each title names its step */}
+      {!isMobile && (
       <div style={{ position: 'relative' }}>
         <div style={{ display: 'flex', justifyContent: 'space-around', marginBottom: 32 }}>
           {['01', '02', '03'].map((num) => (
@@ -233,10 +236,11 @@ export function HowItWorks() {
         </div>
         <ConnectingPath />
       </div>
+      )}
 
-      <div style={{ display: 'flex', gap: 20 }}>
+      <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: isMobile ? 16 : 20 }}>
         {terminals.map((t, i) => (
-          <Terminal key={t.title} terminal={t} index={i} />
+          <Terminal key={t.title} terminal={t} index={i} isMobile={isMobile} />
         ))}
       </div>
     </section>
